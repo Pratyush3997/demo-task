@@ -2,56 +2,38 @@ def gv
 
 pipeline {
     agent any
-    parameters {
-        choice(name: 'VERSION', choices: ['1.1.0', '1.2.0', '1.3.0'], description: '')
-        booleanParam(name: 'executeTests', defaultValue: true, description: '')
+    tools {
+        maven 'Maven'
     }
     stages {
         stage("init") {
             steps {
                 script {
-                   gv = load "script.groovy" 
+                    gv = load "script.groovy"
                 }
             }
         }
-        stage("build") {
-            when{
-                expression {
-                    BRANCH_NAME == 'master'
-                }
-            }
+        stage("build jar") {
             steps {
                 script {
-                    echo 'builing the application'
-                    gv.buildApp()
+                    gv.buildJar()
                 }
             }
         }
-        stage("test") {
-            when {
-                expression {                 
-                    params.executeTests
-                }
-            }
+        stage("build image") {
             steps {
                 script {
-                    echo 'testing the application'
-                    gv.testApp()
+                    gv.buildImage()
                 }
             }
         }
         stage("deploy") {
-            when{
-                expression {
-                    BRANCH_NAME == 'master'
-                }
-            }
             steps {
                 script {
-                    echo 'deploying the application'
                     gv.deployApp()
                 }
             }
         }
-    }   
+    }
 }
+
