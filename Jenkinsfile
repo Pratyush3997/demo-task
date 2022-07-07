@@ -20,13 +20,6 @@ pipeline {
                 }
             }
         }
-        stage("build image") {
-            steps {
-                script {
-                    gv.buildImage()
-                }
-            }
-        }
         stage("deploy") {
             steps {
                 script {
